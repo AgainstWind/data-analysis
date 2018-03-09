@@ -11,7 +11,9 @@ classifier = tf.estimator.LinearClassifier()
 """
 def train_input_fn():
 
-    data = ()
+    data = {
+
+    }
 
 
 classifier.train(steps=2000,input_fn=train_input_fn)
