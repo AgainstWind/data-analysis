@@ -4,11 +4,11 @@ from scipy.optimize import linprog
 
 a = np.array([[3,1,-2],[1,-1,4],[2,0,3]])
 b = np.array([5,-2,2.5])
-
 x = solve(a,b)
-
+print("------------------------start-------------------------")
 print(x)
-
+print(np.ndim(a)) # rank of a
+print("------------------------end---------------------------")
 """
 线性规划demo
 min: z = x1 +2x2 + 3x3
