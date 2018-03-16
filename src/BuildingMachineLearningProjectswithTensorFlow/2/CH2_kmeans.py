@@ -53,7 +53,6 @@ sess.run(tf.global_variables_initializer())
 
 sess.run(centroids)
 
-
 rep_centroids = tf.reshape(tf.tile(centroids, [N, 1]), [N, K, 2])
 rep_points = tf.reshape(tf.tile(points, [1, K]), [N, K, 2])
 sum_squares = tf.reduce_sum(tf.square(rep_points - rep_centroids), 
@@ -105,7 +104,7 @@ plt.show()
 
 
 end = time.time()
-print ("Found in %.2f seconds" % (end-start)), iters, "iterations"
+print ("Found in %.2f seconds" % (end-start), iters, "iterations")
 print ("Centroids:")
 print (centers)
 print ("Cluster assignments:", assignments)
