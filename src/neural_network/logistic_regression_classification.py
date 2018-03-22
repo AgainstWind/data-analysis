@@ -28,3 +28,119 @@ plt.ylabel('$x_2$', fontsize=15)
 plt.axis([-4, 4, -4, 4])
 plt.title('red vs. blue classes in the input space')
 plt.show()
+
+
+# Define the logistic function
+def logistic(z):
+    return 1 / (1 + np.exp(-z))
+
+
+# Define the neural network function y = 1 / (1 + numpy.exp(-x*w))
+def nn(x, w):
+    return logistic(x.dot(w.T))
+
+
+# Define the neural network prediction function that only returns
+#  1 or 0 depending on the predicted class
+def nn_predict(x, w):
+    return np.around(nn(x, w))
+
+
+# Define the cost function
+def cost(y, t):
+    return - np.sum(np.multiply(t, np.log(y)) + np.multiply((1 - t), np.log(1 - y)))
+
+# Plot the cost in function of the weights
+# Define a vector of weights for which we want to plot the cost
+nb_of_ws = 100 # compute the cost nb_of_ws times in each dimension
+ws1 = np.linspace(-5, 5, num=nb_of_ws) # weight 1
+ws2 = np.linspace(-5, 5, num=nb_of_ws) # weight 2
+ws_x, ws_y = np.meshgrid(ws1, ws2) # generate grid
+cost_ws = np.zeros((nb_of_ws, nb_of_ws)) # initialize cost matrix
+# Fill the cost matrix for each combination of weights
+for i in range(nb_of_ws):
+    for j in range(nb_of_ws):
+        cost_ws[i,j] = cost(nn(X, np.asmatrix([ws_x[i,j], ws_y[i,j]])) , t)
+# Plot the cost function surface
+plt.contourf(ws_x, ws_y, cost_ws, 20, cmap=cm.pink)
+cbar = plt.colorbar()
+cbar.ax.set_ylabel('$\\xi$', fontsize=15)
+plt.xlabel('$w_1$', fontsize=15)
+plt.ylabel('$w_2$', fontsize=15)
+plt.title('Cost function surface')
+plt.grid()
+plt.show()
+
+# define the gradient function.
+def gradient(w, x, t):
+    return (nn(x, w) - t).T * x
+
+# define the update function delta w which returns the
+#  delta w for each weight in a vector
+def delta_w(w_k, x, t, learning_rate):
+    return learning_rate * gradient(w_k, x, t)
+# Set the initial weight parameter
+w = np.asmatrix([-4, -2])
+# Set the learning rate
+learning_rate = 0.05
+
+# Start the gradient descent updates and plot the iterations
+nb_of_iterations = 10  # Number of gradient descent updates
+w_iter = [w]  # List to store the weight values over the iterations
+for i in range(nb_of_iterations):
+    dw = delta_w(w, X, t, learning_rate)  # Get the delta w update
+    w = w-dw  # Update the weights
+    w_iter.append(w)  # Store the weights for plotting
+# Plot the first weight updates on the error surface
+# Plot the error surface
+plt.contourf(ws_x, ws_y, cost_ws, 20, alpha=0.9, cmap=cm.pink)
+cbar = plt.colorbar()
+cbar.ax.set_ylabel('cost')
+
+# Plot the updates
+for i in range(1, 4):
+    w1 = w_iter[i-1]
+    w2 = w_iter[i]
+    # Plot the weight-cost value and the line that represents the update
+    plt.plot(w1[0,0], w1[0,1], 'bo')  # Plot the weight cost value
+    plt.plot([w1[0,0], w2[0,0]], [w1[0,1], w2[0,1]], 'b-')
+    plt.text(w1[0,0]-0.2, w1[0,1]+0.4, '$w({})$'.format(i), color='b')
+w1 = w_iter[3]
+# Plot the last weight
+plt.plot(w1[0,0], w1[0,1], 'bo')
+plt.text(w1[0,0]-0.2, w1[0,1]+0.4, '$w({})$'.format(4), color='b')
+# Show figure
+plt.xlabel('$w_1$', fontsize=15)
+plt.ylabel('$w_2$', fontsize=15)
+plt.title('Gradient descent updates on cost surface')
+plt.grid()
+plt.show()
+
+
+# Plot the resulting decision boundary
+# Generate a grid over the input space to plot the color of the
+#  classification at that grid point
+nb_of_xs = 200
+xs1 = np.linspace(-4, 4, num=nb_of_xs)
+xs2 = np.linspace(-4, 4, num=nb_of_xs)
+xx, yy = np.meshgrid(xs1, xs2) # create the grid
+# Initialize and fill the classification plane
+classification_plane = np.zeros((nb_of_xs, nb_of_xs))
+for i in range(nb_of_xs):
+    for j in range(nb_of_xs):
+        classification_plane[i,j] = nn_predict(np.asmatrix([xx[i,j], yy[i,j]]) , w)
+# Create a color map to show the classification colors of each grid point
+cmap = ListedColormap([
+        colorConverter.to_rgba('r', alpha=0.30),
+        colorConverter.to_rgba('b', alpha=0.30)])
+
+# Plot the classification plane with decision boundary and input samples
+plt.contourf(xx, yy, classification_plane, cmap=cmap)
+plt.plot(x_red[:,0], x_red[:,1], 'ro', label='target red')
+plt.plot(x_blue[:,0], x_blue[:,1], 'bo', label='target blue')
+plt.grid()
+plt.legend(loc=2)
+plt.xlabel('$x_1$', fontsize=15)
+plt.ylabel('$x_2$', fontsize=15)
+plt.title('red vs. blue classification boundary')
+plt.show()
