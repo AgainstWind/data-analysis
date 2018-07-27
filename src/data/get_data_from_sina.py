@@ -1,4 +1,5 @@
 import urllib3
+import pandas
 
 '''
 create_table_stock_sina.sql
@@ -13,6 +14,9 @@ def sinaStockUrl(pageNum):
     url += '&sort=symbol&asc=1&node=hs_a&symbol=&_s_r_a=init'
     print(url)
     return url
+
+data_header = ['symbol','code','name','trade','pricechange','changepercent','buy','sell','settlement','open','high',
+               'low','volume','amount','ticktime','per','pb','mktcap','nmc','turnoverratio' ]
 
 
 def sinaStockData(url):
