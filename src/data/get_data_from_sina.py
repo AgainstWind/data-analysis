@@ -37,15 +37,33 @@ volume:12120067,amount:121060815,ticktime:"15:00:00",per:5.429,pb:0.736,mktcap:2
 turnoverratio:0.04313}]'
 '''
 
+
+def dict2array(dictt):
+    try:
+       arry = []
+       for key in data_header:
+            if key in dictt:
+                arry.append(dictt.get(key))
+       print(arry)
+       return arry
+    except Exception as e:
+        print(e.args)
+        return None
+
+
+
+
+
 import pandas as pd
-import json
+
 if __name__=='__main__':
+    main_df = pd.DataFrame(data=None,columns=data_header)
     for i in range(1,2,1):
         url = sinaStockUrl(i)
         stock_data = sinaStockData(url)
-        stock_json = parse_js(stock_data)
-        for item in stock_json:
-            pd.read_json(item,typ='series')
+        stock_dict = parse_js(stock_data)
+        df = pd.DataFrame(stock_dict)
+        main_df = main_df.append(df)
 
-
+    print(main_df)
 
