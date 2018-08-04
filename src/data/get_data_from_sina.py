@@ -2,6 +2,7 @@ import urllib3
 import pandas as pd
 import psycopg2 as pg
 import matplotlib.pyplot as plt
+import traceback
 
 '''
 create_table_stock_sina.sql
@@ -53,7 +54,7 @@ def dict2array(dictt):
         print(e.args)
         return None
 
-conn = pg.connect(database="postgres", user="yuezht", password="postgres", host='127.0.0.1', port=5432)
+conn = pg.connect(database="sina_stock", user="yuezht", password="postgres", host='127.0.0.1', port=5432)
 cursor = conn.cursor()
 
 def pg_create_db():
@@ -66,31 +67,27 @@ def pg_create_db():
 
 def pg_insert(item_dicts):
     '''
-    sql = 'insert into sina_stock(symbol,code,name,trade,pricechange,changepercent,buy,sell,settlement,open,high,low,' \
-          'volume,amount,ticktime,per,pb,mktcap,nmc,turnoverratio) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,' \
-          '%s,%s,%s,%s,%s,%s,)',item_dict
     :param item_dict:
     :return:
     '''
-    i = 0
     for item_dict in item_dicts:
         try:
-            sql = 'insert into sina_stock(symbol,code,name,trade,pricechange,changepercent,buy,sell,settlement,open,high,low,' \
-                  'volume,amount,ticktime,per,pb,mktcap,nmc,turnoverratio,id) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,' \
-                  '%s,%s,%s,%s,%s,%s,%d)' % (
+            sql = 'insert into stock_sina(symbol,code,name,trade,pricechange,changepercent,buy,sell,settlement,open,high,low,' \
+                  'volume,amount,ticktime,per,pb,mktcap,nmc,turnoverratio) values (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',' \
+                  '\'%s\',\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');' % (
                   item_dict.get('symbol',None), item_dict.get('code',None), item_dict.get('name',None), item_dict.get('trade',None),
                   item_dict.get('pricechange',None), item_dict.get('changepercent',None), item_dict.get('buy',None),
                   item_dict.get('sell',None), item_dict.get('settlement',None), item_dict.get('open',None), item_dict.get('high',None),
                   item_dict.get('low',None), item_dict.get('volume',None), item_dict.get('amount',None), item_dict.get('ticktime',None),
                   item_dict.get('per',None), item_dict.get('pb',None), item_dict.get('mktcap',None), item_dict.get('nmc',None),
-                  item_dict.get('turnoverratio',None),i)
+                  item_dict.get('turnoverratio',None))
             print(sql)
-            result = cursor.executemany(sql)
+            result = cursor.execute(sql)
             print(result)
-            i+=1
         except Exception as e:
-            print('exception %s'%(e))
-
+            print(e)
+            # traceback.print_exc()
+            #exeception_stack_str = traceback.format_exc()
     conn.commit()
 
 
@@ -104,7 +101,7 @@ if __name__=='__main__':
         pg_insert(stock_dict)
         df = pd.DataFrame(stock_dict)
         main_df = main_df.append(df)
-    main_df.plot(x=main_df['ticktime'])
+    main_df.plot(x=main_df['ticktime'], subplots=True)
     plt.show()
     print(main_df)
 

@@ -22,3 +22,5 @@ CREATE TABLE stock_sina (
 	 turnoverratio   char(50)  ,
 	 id SERIAL primary key
 	);
+
+insert into stock_sina(symbol,code,name,trade,pricechange,changepercent,buy,sell,settlement,open,high,low,volume,amount,ticktime,per,pb,mktcap,nmc,turnoverratio) values (sh600006,600006,东风汽车,3.860,-0.020,-0.515,3.860,3.870,3.880,3.890,3.910,3.840,5515645,21367706,15:00:00,38.446,1.13,772000,772000,0.27578);
