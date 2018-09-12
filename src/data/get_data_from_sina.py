@@ -3,6 +3,7 @@ import pandas as pd
 import psycopg2 as pg
 import matplotlib.pyplot as plt
 import traceback
+import time
 
 '''
 create_table_stock_sina.sql
@@ -89,12 +90,13 @@ def pg_insert(item_dicts):
             # traceback.print_exc()
             #exeception_stack_str = traceback.format_exc()
     conn.commit()
+    time.sleep(2)
 
 
 
 if __name__=='__main__':
     main_df = pd.DataFrame(data=None,columns=data_header,index=['ticktime'])
-    for i in range(1,2,1):
+    for i in range(1,20,1):
         url = sinaStockUrl(i)
         stock_data = sinaStockData(url)
         stock_dict = parse_js(stock_data)
